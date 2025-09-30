@@ -1,0 +1,94 @@
+# Archivos de desarrollo y configuración local
+.env
+.env.local
+.env.development
+.env.production
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+env/
+ENV/
+
+# Base de datos
+db.sqlite3
+db.sqlite3-journal
+*.db
+
+# Logs
+*.log
+logs/
+
+# Media y archivos temporales
+media/
+staticfiles/
+*.tmp
+*.temp
+*.bak
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# Documentación de desarrollo
+README.md
+INSTALACION_COMPLETA.md
+DATOS_GENERADOS.md
+notas.md
+*.md
+
+# Scripts de desarrollo
+start-*.bat
+start-*.ps1
+deploy-local.*
+
+# AWS deployment (mantener solo para container)
+.aws/
+.ebextensions/
+deploy-aws.*
+AWS_DEPLOYMENT_GUIDE.md
+
+# Backups y exports
+database_backup.sql
+*.dump
+fixtures/
+
+# OS específicos
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Coverage y testing
+htmlcov/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
