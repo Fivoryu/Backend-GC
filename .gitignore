@@ -202,3 +202,14 @@ aws-credentials.txt
 # Deployment artifacts
 deployment/
 *.pem
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Database exports
+database_backup.sql
+*.dump
+
+# Fixtures directory (opcional - comentar si quieres versionarlos)
+# fixtures/
