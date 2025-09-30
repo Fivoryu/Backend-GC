@@ -190,3 +190,15 @@ static_collected/
 # Database backups
 *.dump
 *.sql
+
+# AWS Elastic Beanstalk
+.elasticbeanstalk/
+*.zip
+
+# AWS credentials (nunca commitear)
+.aws/
+aws-credentials.txt
+
+# Deployment artifacts
+deployment/
+*.pem
