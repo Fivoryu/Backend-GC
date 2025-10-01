@@ -1,0 +1,84 @@
+runtime: python311
+
+env_variables:
+  SECRET_KEY: "your-super-secret-key-here-minimum-50-chars-long"
+  DEBUG: "False"
+  DJANGO_SETTINGS_MODULE: "config.gcp_settings"
+  
+  # Base de datos Cloud SQL
+  DB_NAME: "condominium_db"
+  DB_USER: "postgres"
+  DB_PASSWORD: "your-db-password"
+  DB_HOST: "/cloudsql/your-project:region:instance-name"
+  DB_PORT: "5432"
+  CLOUD_SQL_CONNECTION_NAME: "your-project:region:instance-name"
+  
+  # Google Cloud Storage
+  GS_BUCKET_NAME: "your-bucket-name"
+  GOOGLE_CLOUD_PROJECT: "your-project-id"
+  
+  # URLs del frontend
+  FRONTEND_URL: "https://your-frontend-domain.web.app"
+  FLUTTER_WEB_URL: "https://your-flutter-domain.web.app"
+  
+  # Configuración de email (Brevo/SendGrid)
+  EMAIL_HOST: "smtp-relay.brevo.com"
+  EMAIL_PORT: "587"
+  EMAIL_USE_TLS: "True"
+  EMAIL_HOST_USER: "your-email@domain.com"
+  EMAIL_HOST_PASSWORD: "your-email-password"
+  DEFAULT_FROM_EMAIL: "your-email@domain.com"
+  BREVO_API_KEY: "your-brevo-api-key"
+  
+  # Cloudinary (para imágenes)
+  CLOUDINARY_CLOUD_NAME: "your-cloudinary-name"
+  CLOUDINARY_API_KEY: "your-cloudinary-key"
+  CLOUDINARY_API_SECRET: "your-cloudinary-secret"
+  
+  # Face++ API
+  FACEPP_API_KEY: "your-facepp-key"
+  FACEPP_API_SECRET: "your-facepp-secret"
+  
+  # Stripe (pagos)
+  STRIPE_PUBLISHABLE_KEY: "pk_test_..."
+  STRIPE_SECRET_KEY: "sk_test_..."
+
+# Configuración de escalado automático
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+  target_throughput_utilization: 0.6
+
+# Configuración de recursos
+resources:
+  cpu: 1
+  memory_gb: 1
+  disk_size_gb: 10
+
+# Configuración de handlers
+handlers:
+  - url: /static
+    static_dir: staticfiles
+    expiration: "1d"
+  
+  - url: /media
+    static_dir: media
+    expiration: "1d"
+  
+  - url: /.*
+    script: auto
+    secure: always
+    redirect_http_response_code: 301
+
+# Conexión a Cloud SQL
+beta_settings:
+  cloud_sql_instances: your-project:region:instance-name
+
+# Configuración de VPC (opcional)
+vpc_access_connector:
+  name: "projects/your-project/locations/region/connectors/your-connector"
+
+# Variables de entorno para desarrollo/staging
+includes:
+  - env_variables.yaml

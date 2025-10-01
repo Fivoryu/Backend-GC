@@ -34,7 +34,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '.railway.app',
     '.up.railway.app',
+    '.run.app',  # Google Cloud Run
+    '.appspot.com',  # Google App Engine
     config('RAILWAY_PUBLIC_DOMAIN', default=''),
+    config('GOOGLE_CLOUD_PROJECT', default='') + '.appspot.com',
     '*',  
 ]
 

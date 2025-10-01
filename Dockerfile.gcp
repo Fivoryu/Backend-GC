@@ -1,0 +1,78 @@
+# Multi-stage build para Google Cloud Run
+FROM python:3.11.10-slim-bookworm as builder
+
+# Variables de build
+ARG BUILD_ENV=production
+
+# Instalar dependencias del sistema para construcción
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev=15.8-0+deb12u1 \
+    postgresql-client-15=15.8-0+deb12u1 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar requirements y instalar dependencias
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Etapa de producción
+FROM python:3.11.10-slim-bookworm
+
+# Metadatos
+LABEL maintainer="Condominium Management Team"
+LABEL version="1.0"
+LABEL description="Condominium Management API for Google Cloud Run"
+
+# Variables de entorno para producción
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DJANGO_SETTINGS_MODULE=config.gcp_settings
+ENV PORT=8080
+
+# Crear usuario no-root para seguridad
+RUN groupadd -r appgroup && useradd -r -g appgroup -u 1000 appuser
+
+# Instalar dependencias del sistema de runtime
+RUN apt-get update && apt-get install -y \
+    libpq5=15.8-0+deb12u1 \
+    postgresql-client-15=15.8-0+deb12u1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Crear directorios necesarios
+RUN mkdir -p /app/staticfiles /app/media /app/logs && \
+    chown -R appuser:appgroup /app
+
+# Copiar dependencias instaladas desde builder
+COPY --from=builder /root/.local /home/appuser/.local
+
+# Cambiar al usuario no-root
+USER appuser
+
+# Actualizar PATH para incluir binarios de usuario
+ENV PATH=/home/appuser/.local/bin:$PATH
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar código de la aplicación
+COPY --chown=appuser:appgroup . .
+
+# Recopilar archivos estáticos
+RUN python manage.py collectstatic --noinput --settings=config.gcp_settings
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:$PORT/api/ || exit 1
+
+# Exponer puerto
+EXPOSE $PORT
+
+# Comando para ejecutar la aplicación
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 config.wsgi:application
